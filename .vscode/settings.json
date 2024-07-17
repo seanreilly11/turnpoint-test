@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "connectString": "postgresql://postgres:LhlzJHlxwpyjbsXOHauUYNyUQMJrZUcc@roundhouse.proxy.rlwy.net:27854/railway",
+            "name": "TurnPoint db"
+        }
+    ]
+}

@@ -4,8 +4,12 @@ import UserItem from "./UserItem";
 import { TUser } from "../utils/types";
 import UserTableHeadings from "./UserTableHeadings";
 
-const UserList = () => {
-    const { data: users } = useQuery({
+type Props = {
+    setEditUser: React.Dispatch<React.SetStateAction<TUser | null>>;
+};
+
+const UserList = ({ setEditUser }: Props) => {
+    const { data: users, isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getUsers,
     });
@@ -16,9 +20,19 @@ const UserList = () => {
                     <UserTableHeadings />
                 </thead>
                 <tbody>
-                    {users?.map((user: TUser) => (
-                        <UserItem key={user.id} user={user} />
-                    ))}
+                    {isLoading ? (
+                        <tr>
+                            <td className="px-6 py-4">Loading...</td>
+                        </tr>
+                    ) : (
+                        users?.map((user: TUser) => (
+                            <UserItem
+                                key={user.id}
+                                user={user}
+                                setEditUser={setEditUser}
+                            />
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>

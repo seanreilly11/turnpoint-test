@@ -1,11 +1,32 @@
 // import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TUser } from "../utils/types";
+import { deleteUser } from "../services/users";
 
 type Props = {
     user: TUser;
+    setEditUser: React.Dispatch<React.SetStateAction<TUser | null>>;
 };
 
-const UserItem = ({ user }: Props) => {
+const UserItem = ({ user, setEditUser }: Props) => {
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: () => deleteUser(user.id!),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ["users"],
+            });
+        },
+    });
+
+    const handleEdit = () => {
+        setEditUser({ ...user });
+    };
+
+    const handleDelete = () => {
+        mutation.mutate();
+    };
+
     if (!user) return;
     return (
         <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
@@ -22,12 +43,18 @@ const UserItem = ({ user }: Props) => {
                 {[...user.languages.slice(1)].join(", ")}
             </td>
             <td className="px-6 py-4">
-                <a
-                    href="#"
+                <button
                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    onClick={handleEdit}
                 >
                     Edit
-                </a>
+                </button>
+                <button
+                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    onClick={handleDelete}
+                >
+                    Delete
+                </button>
             </td>
         </tr>
     );

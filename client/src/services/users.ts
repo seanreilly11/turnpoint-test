@@ -9,7 +9,7 @@ export const getUsers = async () => {
     }
 };
 
-export const getUser = async (id: string) => {
+export const getUser = async (id: number) => {
     try {
         const res = await fetch(`http://localhost:3000/api/v1/users/${id}`);
         return res.json();
@@ -33,14 +33,25 @@ export const addUser = async (body: TUser) => {
     }
 };
 
-export const updateUser = async (id: string, body: Partial<TUser>) => {
+export const updateUser = async (id: number, body: TUser) => {
     try {
         const res = await fetch(`http://localhost:3000/api/v1/users/${id}`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
+        });
+        return res.json();
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const deleteUser = async (id: number) => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/v1/users/${id}`, {
+            method: "DELETE",
         });
         return res.json();
     } catch (error) {

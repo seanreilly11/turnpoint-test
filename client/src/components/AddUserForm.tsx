@@ -2,7 +2,12 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fundingOptions, languageOptions, TUser } from "../utils/types";
-import { addUser } from "../services/users";
+import { addUser, updateUser } from "../services/users";
+
+type Props = {
+    editUser: TUser | null;
+    setEditUser: React.Dispatch<React.SetStateAction<TUser | null>>;
+};
 
 type Inputs = {
     firstname: string;
@@ -13,21 +18,25 @@ type Inputs = {
     funding: string;
 };
 
-const AddUserForm = () => {
+const AddUserForm = ({ editUser, setEditUser }: Props) => {
     const queryClient = useQueryClient();
     const mutation = useMutation({
-        mutationFn: (user: TUser) => addUser(user),
+        mutationFn: (user: TUser) =>
+            editUser?.id ? updateUser(editUser.id, user) : addUser(user),
         onSuccess: async () => {
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({
                 queryKey: ["users"],
             });
+            setEditUser(null);
+            reset();
         },
     });
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
-    } = useForm<Inputs>();
+    } = useForm<Inputs>({ values: makeEditUserValues() });
     const onSubmit: SubmitHandler<Inputs> = (data) =>
         mutation.mutate(formatUserData(data));
 
@@ -46,11 +55,10 @@ const AddUserForm = () => {
             funding,
             languages: [...new Set([primaryLanguage, ...secondaryLanguages])],
         };
-        console.log(user);
         return user;
     };
 
-    const getTodaysDate = () => {
+    const todaysDate = () => {
         const now = new Date();
         const today = `${now.getFullYear()}-${
             now.getMonth() + 1 < 10
@@ -59,6 +67,22 @@ const AddUserForm = () => {
         }-${now.getDate()}`;
         return today;
     };
+
+    function makeEditUserValues() {
+        if (editUser) {
+            const { firstname, lastname, dob, languages, funding } =
+                editUser as TUser;
+            return {
+                firstname,
+                lastname,
+                dob,
+                primaryLanguage: languages[0],
+                secondaryLanguages: [...languages.slice(1)],
+                funding,
+            };
+        }
+        return;
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
@@ -103,13 +127,13 @@ const AddUserForm = () => {
                 </div>
             </div>
             <div className="flex flex-wrap -mx-3 mb-6 gap-y-4">
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                         Date of Birth
                     </label>
                     <input
                         type="date"
-                        max={getTodaysDate()}
+                        max={todaysDate()}
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                         {...register("dob", { required: true })}
                     />
@@ -119,7 +143,7 @@ const AddUserForm = () => {
                         </p>
                     ) : null}
                 </div>
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                         Funding
                     </label>
@@ -145,7 +169,7 @@ const AddUserForm = () => {
                         </div>
                     </div>
                 </div>
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                         Primary language
                     </label>
@@ -171,7 +195,7 @@ const AddUserForm = () => {
                         </div>
                     </div>
                 </div>
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                         Secondary languages
                     </label>
@@ -199,12 +223,25 @@ const AddUserForm = () => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className="flex gap-x-4">
                 <button
                     type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                 >
-                    Add user
+                    {editUser
+                        ? mutation.isPending
+                            ? "Updating user..."
+                            : "Update user"
+                        : mutation.isPending
+                        ? "Adding user..."
+                        : "Add user"}
+                </button>
+                <button
+                    type="reset"
+                    onClick={() => reset()}
+                    className="bg-transparent text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
+                >
+                    Reset form
                 </button>
             </div>
         </form>

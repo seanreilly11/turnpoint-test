@@ -44,13 +44,13 @@ const UserItem = ({ user, setEditUser }: Props) => {
             </td>
             <td className="px-6 py-4">
                 <button
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    className="font-medium text-blue-600 hover:underline"
                     onClick={handleEdit}
                 >
                     Edit
                 </button>
                 <button
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    className="font-medium text-blue-600 hover:underline"
                     onClick={handleDelete}
                 >
                     Delete

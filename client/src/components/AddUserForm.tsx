@@ -1,4 +1,4 @@
-// import React from "react";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fundingOptions, languageOptions, TUser } from "../utils/types";
@@ -221,6 +221,7 @@ const AddUserForm = ({ editUser, setEditUser }: Props) => {
                             </svg>
                         </div>
                     </div>
+                    <i className="text-xs">ctrl + click for multiple</i>
                 </div>
             </div>
             <div className="flex gap-x-4">

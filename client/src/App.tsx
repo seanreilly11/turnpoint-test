@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./App.css";
 import AddUserForm from "./components/AddUserForm";
-import UserList from "./components/UserList";
+import UserTable from "./components/UserTable";
 import { useState } from "react";
 import { TUser } from "./utils/types";
 
@@ -10,7 +10,7 @@ function App() {
     const [editUser, setEditUser] = useState<TUser | null>(null);
     return (
         <QueryClientProvider client={queryClient}>
-            <div className="container mx-auto my-4">
+            <div className="container mx-auto m-4">
                 <h1 className="text-xl mb-8">
                     TurnPoint code test - Sean Reilly
                 </h1>
@@ -19,7 +19,7 @@ function App() {
                         editUser={editUser}
                         setEditUser={setEditUser}
                     />
-                    <UserList setEditUser={setEditUser} />
+                    <UserTable setEditUser={setEditUser} />
                 </div>
             </div>
         </QueryClientProvider>

@@ -8,11 +8,12 @@ type Props = {
     setEditUser: React.Dispatch<React.SetStateAction<TUser | null>>;
 };
 
-const UserList = ({ setEditUser }: Props) => {
+const UserTable = ({ setEditUser }: Props) => {
     const { data: users, isLoading } = useQuery({
         queryKey: ["users"],
         queryFn: getUsers,
     });
+
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -39,4 +40,4 @@ const UserList = ({ setEditUser }: Props) => {
     );
 };
 
-export default UserList;
+export default UserTable;

@@ -1,4 +1,3 @@
 import { Sequelize } from "sequelize";
-export default new Sequelize(
-    "postgresql://postgres:LhlzJHlxwpyjbsXOHauUYNyUQMJrZUcc@roundhouse.proxy.rlwy.net:27854/railway"
-);
+require("dotenv").config();
+export default new Sequelize(process.env.DB_URL!);
